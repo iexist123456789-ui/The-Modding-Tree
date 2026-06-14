@@ -6,7 +6,7 @@ let modInfo = {
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
@@ -40,8 +40,12 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
+	
 
 	let gain = new Decimal(1)
+	if ((buyableEffect('t', 31).gte(1))) gain = gain.mul(buyableEffect('t', 31))
+	gain = gain.mul(buyableEffect('t', 32))
+	if (hasUpgrade("t", 21)) gain = gain.mul(2)
 	return gain
 }
 
@@ -76,3 +80,8 @@ function maxTickLength() {
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
 }
+
+
+
+
+
