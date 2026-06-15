@@ -93,7 +93,7 @@ addLayer("t", {
             currencyInternalName: "points",
             title: "More Doublers",
             description: "Half the price of 'The Second Buyable'.",
-            cost: new Decimal(750),
+            cost: new Decimal(1000000),
             unlocked() {return hasUpgrade("a", 21)},
         },
         32: {
@@ -101,7 +101,7 @@ addLayer("t", {
             currencyInternalName: "points",
             title: "The Most Doublers",
             description: "Increase the max level of The Second Buyable by 5.",
-            cost: new Decimal(5000000),
+            cost: new Decimal(100000000),
             unlocked() {return hasUpgrade("t", 31)},
         },
         41: {
@@ -120,7 +120,11 @@ addLayer("t", {
         31: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
-            cost(x) { return new Decimal(10).mul(1.75).mul(x).mul(x).add(10)},
+            cost(x) { 
+                let price = new Decimal(10).mul(1.75).mul(x).mul(x).add(10)
+                if (getBuyableAmount(this.layer, this.id).gte(40)) price = price.mul(x)
+                return price
+            },
             
             purchaseLimit() {
             let Limit = new Decimal(10)
@@ -160,8 +164,13 @@ addLayer("t", {
             currencyDisplayName: "points",
             currencyInternalName: "points",
             cost(x) { 
-                let price = new Decimal(20).mul(2).mul(x + 2).mul(x + 1).mul(x).add(300)
+                let price = new Decimal(25).mul(2).mul(x + 2).mul(x + 1).mul(x).add(300)
+                if (getBuyableAmount(this.layer, this.id).gte(3)) price = price.mul(x)
+                if (getBuyableAmount(this.layer, this.id).gte(5)) price = price.mul(x).mul(x)
+                if (getBuyableAmount(this.layer, this.id).gte(7)) price = price.mul(x).mul(x)
+                if (getBuyableAmount(this.layer, this.id).gte(10)) price = price.mul(x).mul(x).mul(x)
                 if (hasUpgrade("t", 31)) price = price.div(2)
+                
                 return price
             
             
@@ -196,7 +205,12 @@ addLayer("t", {
         33: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
-            cost(x) { return new Decimal(300).mul(2.25).mul(x + 3).mul(x + 2).add(750)},
+            cost(x) { 
+                
+                let price = new Decimal(300).mul(2.25).mul(x + 3).mul(x + 2).mul(x).add(750)
+                if (getBuyableAmount(this.layer, this.id).gte(5)) price = price.mul(x)
+                return price
+            },
             
             purchaseLimit: 10,
             
@@ -275,21 +289,39 @@ addLayer("a", {
         12: {
             title: "A Simple Upgrade",
             description: "Triple your point gain.",
-            cost: new Decimal(100),
+            cost: new Decimal(25),
+            
+        },
+        13: {
+            title: "Finally, Something To Get Excited About!",
+            description: "Increases point gain based on Abstract.",
+            cost: new Decimal(10),
+            effect() {
+                return player[this.layer].points.add(1).pow(0.25)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             
         },
         21: {
             title: "Even More Upgrades!",
             description: "Unlock even more Point upgrades.",
-            cost: new Decimal(10),
+            cost: new Decimal(1000),
             unlocked() {return hasUpgrade("a", 11)},
             
         },
         22: {
             title: "A Simple Upgrade, For The Late Game",
             description: "Increase the max level of The First Buyable by +20.",
-            cost: new Decimal(200),
+            cost: new Decimal(80),
             unlocked() {return hasUpgrade("a", 12)},
+            
+        },
+        23: {
+            title: "Something To Get Really Excited About",
+            description: "Unlock the next thing.",
+            cost: new Decimal(200),
+            unlocked() {return hasUpgrade("a", 13)},
+            //this is NOT IMPLEMENTED!
             
         },
     },
