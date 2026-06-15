@@ -69,7 +69,7 @@ addLayer("t", {
             title: "An Early Boost In Case You Need It!",
             description: "Double Point gain.",
             cost: new Decimal(50),
-            
+            unlocked() {return hasUpgrade("a", 11)},
 
         },
         22: {
@@ -77,18 +77,34 @@ addLayer("t", {
             currencyInternalName: "points",
             title: "Another One?",
             description: "Unlock your third buyable.",
-            cost: new Decimal(250),
+            cost: new Decimal(1000),
             unlocked() {return hasUpgrade("t", 21)},
         },
         23: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
-            title: "",
-            description: "",
+            title: "Even More Of The First One",
+            description: "Increase the max level of The First Buyable by 20.",
             cost: new Decimal(30000),
             unlocked() {return hasUpgrade("t", 22)},
         },
         31: {
+            currencyDisplayName: "points",
+            currencyInternalName: "points",
+            title: "More Doublers",
+            description: "Half the price of 'The Second Buyable'.",
+            cost: new Decimal(750),
+            unlocked() {return hasUpgrade("a", 21)},
+        },
+        32: {
+            currencyDisplayName: "points",
+            currencyInternalName: "points",
+            title: "The Most Doublers",
+            description: "Increase the max level of The Second Buyable by 5.",
+            cost: new Decimal(5000000),
+            unlocked() {return hasUpgrade("t", 31)},
+        },
+        41: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
             title: "Abstract",
@@ -109,6 +125,8 @@ addLayer("t", {
             purchaseLimit() {
             let Limit = new Decimal(10)
             if (hasUpgrade("t", 14)) Limit = Limit.add(10)
+            if (hasUpgrade("t", 23)) Limit = Limit.add(20)
+            if (hasUpgrade("a", 22)) Limit = Limit.add(20)
             return Limit
 
             },
@@ -141,11 +159,21 @@ addLayer("t", {
         32: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
-            cost(x) { return new Decimal(100).mul(2).mul(x + 2).mul(x + 1).mul(x).mul(x-1).add(100)},
-            purchaseLimit: 10,
+            cost(x) { 
+                let price = new Decimal(20).mul(2).mul(x + 2).mul(x + 1).mul(x).add(300)
+                if (hasUpgrade("t", 31)) price = price.div(2)
+                return price
+            
+            
+            },
+            purchaseLimit() {
+                let limit = new Decimal(10)
+                if (hasUpgrade("t", 32)) limit = limit.add(5)
+                return limit
+            },
             display() {
             const amt = getBuyableAmount(this.layer, this.id);
-            const pl = this.purchaseLimit
+            const pl = this.purchaseLimit()
             return `Double point gain each level.\n
                         Level: ${amt}/${pl}\n
                         Cost: ${format(this.cost(amt))} Points\n
@@ -168,7 +196,7 @@ addLayer("t", {
         33: {
             currencyDisplayName: "points",
             currencyInternalName: "points",
-            cost(x) { return new Decimal(300).mul(2.25).mul(x + 3).mul(x + 2).mul(x + 1).mul(x).add(750)},
+            cost(x) { return new Decimal(300).mul(2.25).mul(x + 3).mul(x + 2).add(750)},
             
             purchaseLimit: 10,
             
@@ -217,7 +245,7 @@ addLayer("a", {
                                             // Also the amount required to unlock the layer.
 
     update(diff) {
-    if (hasUpgrade("t", 31)) player.a.unlockedOnce = true
+    if (hasUpgrade("t", 41)) player.a.unlockedOnce = true
     },
     type: "normal",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.5, 
@@ -239,10 +267,30 @@ addLayer("a", {
 
     upgrades: {
         11: {
-            title: "A Whole New Layer",
+            title: "More Upgrades!",
             description: "Unlock more Point upgrades.",
             cost: new Decimal(1),
             unlocked: true
+        },
+        12: {
+            title: "A Simple Upgrade",
+            description: "Triple your point gain.",
+            cost: new Decimal(100),
+            
+        },
+        21: {
+            title: "Even More Upgrades!",
+            description: "Unlock even more Point upgrades.",
+            cost: new Decimal(10),
+            unlocked() {return hasUpgrade("a", 11)},
+            
+        },
+        22: {
+            title: "A Simple Upgrade, For The Late Game",
+            description: "Increase the max level of The First Buyable by +20.",
+            cost: new Decimal(200),
+            unlocked() {return hasUpgrade("a", 12)},
+            
         },
     },
 })
